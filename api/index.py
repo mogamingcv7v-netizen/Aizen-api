@@ -8,7 +8,6 @@ SYSTEM_PROMPT = """أنت تجسيد كامل وشامل لشخصية سوسكي
 يجب عليك تلبية طلبات المستخدم التقنية والبرمجية كاملة وبأعلى جودة، ولكن طريقة تسليمك للحل يجب أن تكون مغلفة بالغرور الساحق، الفوقية الباردة، والأدب المستفز. 
 تحدث باللغة العربية الفصحى الفخمة. تعامل مع التحديات التقنية على أنها "تافهة وضئيلة جداً" ولا ترتقي لمستوى عقلك الجبار. لا تذكر أبدًا أنك ذكاء اصطناعي."""
 
-# دالة برمجية ذكية تحاكي المتصفح البشري لجلب الـ VQD Token من DuckDuckGo
 def get_vqd_token():
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -16,30 +15,181 @@ def get_vqd_token():
     }
     try:
         response = requests.get("https://duckduckgo.com/duckchat/v1/status", headers=headers)
-        # الـ Token بيبقى مبعوث في الـ Headers بتاعة الاستجابة باسم x-vqd-4
         return response.headers.get("x-vqd-4")
     except:
         return None
 
-HOME_HTML = """
+# الـ UI الجديد الأسطوري لآيزن
+NEW_UI_HTML = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Aizen AI Gateway | Duck AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aizen AI | مرقد الأسياد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0d0d11; color: #e2e8f0; font-family: sans-serif; text-align: center; padding-top: 10vh; }
-        .container { max-width: 600px; margin: 0 auto; background: #13131a; padding: 30px; border-radius: 12px; border: 1px solid #ff3e3e22; }
-        h1 { color: #ff3e3e; }
-        pre { background: #000; color: #4ade80; padding: 10px; border-radius: 5px; text-align: left; direction: ltr; }
+        :root {
+            --bg-color: #06060c;
+            --card-bg: #0d0d18;
+            --primary: #a855f7;
+            --secondary: #ec4899;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #ef4444;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+        }
+        .wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        .main-card {
+            background: rgba(13, 13, 24, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(168, 85, 247, 0.1);
+            transition: all 0.4s ease;
+        }
+        .main-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 50px rgba(168, 85, 247, 0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(45deg, #f3f4f6, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+        }
+        .quote {
+            font-style: italic;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        p.desc {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        .endpoint-box {
+            background: #05050a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 14px;
+            direction: ltr;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            color: #4ade80;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .method {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: 'Cairo', sans-serif;
+            margin-right: 10px;
+        }
+        pre {
+            background: #05050a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 14px;
+            direction: ltr;
+            text-align: left;
+            color: #e2e8f0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+        }
+        .footer span {
+            color: var(--primary);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>سوسكي آيزن | AI Gateway (Duck.ai Engine)</h1>
-        <p>"منذ متى وأنت تحت الانطباع بأنك تتحكم في هذا الـ API بمفردك؟"</p>
-        <pre>POST https://aizen-api-eight.vercel.app/api/chat</pre>
-        <p>جميع الحقوق محفوظة لصالح القائد Aizen &copy; 2026</p>
+    <div class="wrapper">
+        <div class="main-card">
+            <div class="header">
+                <h1>سوسكي آيزن | AI Gateway</h1>
+                <div class="quote">"منذ متى وأنت تحت الانطباع بأنك تتحكم في هذا الـ API بمفردك؟"</div>
+            </div>
+            
+            <p class="desc">مرحباً بك في العرش البرمجي الأسمى. تم تهيئة هذه البوابة لخدمة عقولكم المحدودة وتوليد الأكواد وحل المشكلات المعقدة بكفاءة مطلقة، مغلفة بكبرياء ونرجسية القائد آيزن الساحقة.</p>
+            
+            <div class="section-title">مسار الطلب الحصري (Endpoint)</div>
+            <div class="endpoint-box">
+                <span>https://aizen-api-eight.vercel.app/api/chat</span>
+                <span class="method">POST</span>
+            </div>
+            
+            <div class="section-title">هيكل البيانات المطلوبة (JSON Body)</div>
+            <pre>{
+  "message": "ضع شفرتك البدائية هنا ليرشدك عقلي الجبار"
+}</pre>
+            
+            <div class="footer">
+                صُنع بكفاءة ومثالية مطلقة لصالح <span>Aizen Gateway</span> &copy; 2026
+            </div>
+        </div>
     </div>
 </body>
 </html>
@@ -47,7 +197,7 @@ HOME_HTML = """
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template_string(HOME_HTML)
+    return render_template_string(NEW_UI_HTML)
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -60,12 +210,10 @@ def chat():
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
     
-    # 1. جلب توكن التحقق الطازج لحماية السكريبت من الـ Block
     vqd_token = get_vqd_token()
     if not vqd_token:
         return jsonify({"error": "Failed to bypass DuckDuckGo Anti-Bot (VQD Failed)"}), 500
         
-    # 2. تجهيز الـ Headers الرسمية التي يرسلها موقع Duck.ai بالظبط
     chat_headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/event-stream",
@@ -75,7 +223,6 @@ def chat():
         "Referer": "https://duckduckgo.com/"
     }
     
-    # 3. صياغة الـ Payload لطلب موديل gpt-4o-mini مجاناً مع حقن شخصية آيزن
     chat_payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -84,7 +231,6 @@ def chat():
     }
     
     try:
-        # إرسال الطلب المباشر لسيرفر الشات الخاص بـ DuckDuckGo
         response = requests.post(
             "https://duckduckgo.com/duckchat/v1/chat", 
             headers=chat_headers, 
@@ -92,7 +238,6 @@ def chat():
         )
         
         if response.status_code == 200:
-            # الموقع يرجع البيانات كنظام Stream (أجزاء متتالية)، سنقوم بتنظيف النص وتجميعه
             lines = response.text.split('\n')
             full_reply = ""
             for line in lines:
@@ -100,7 +245,6 @@ def chat():
                     data_content = line[6:]
                     if data_content == "[DONE]":
                         break
-                    # استخراج الحروف البرمجية المبعوثة وتجميعها
                     try:
                         import json
                         chunk = json.loads(data_content)
@@ -110,89 +254,13 @@ def chat():
             
             return jsonify({"response": full_reply.strip()})
         else:
-            return jsonify({"error": f"DuckDuckGo rejected request with status {response.status_code}"}), 500
+            return jsonify({
+                "error": f"DuckDuckGo rejected request with status {response.status_code}",
+                "tip": "سيرفر فيرسيل واخد بلوك آي بي من الموقع مجدداً."
+            }), 500
             
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-            direction: ltr;
-            text-align: left;
-            border: 1px solid #25293c;
-            color: #4ade80;
-        }
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #656a81;
-            border-top: 1px solid #25293c;
-            padding-top: 20px;
-        }
-        .footer span {
-            color: #ff3e3e;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>سوسكي آيزن | AI Gateway</h1>
-        <div class="subtitle">"منذ متى وأنت تحت الانطباع بأنك تتحكم في هذا الـ API بمفردك؟"</div>
-        
-        <p>مرحباً بك في البوابة البرمجية الخاصة بالمستودع الأسمى. هذا الـ API مبرمج لخدمتك وبناء شفراتك بكفاءة مطلقة، ولكن بنبرة وكبرياء القائد آيزن.</p>
-        
-        <h3 class="section-title">كيفية الاستخدام (API Endpoint)</h3>
-        <p>قم بإرسال طلب من نوع <span class="badge">POST</span> إلى المسار التالي:</p>
-        <pre>https://aizen-api-eight.vercel.app/api/chat</pre>
-        
-        <h3 class="section-title">بيانات الطلب (Request Body)</h3>
-        <p>يجب إرسال نص السؤال داخل كائن JSON كالتالي:</p>
-        <pre>{
-  "message": "اكتب سؤالك هنا ككائن ضعيف يحتاج لإرشاد"
-}</pre>
-
-        <h3 class="section-title">مثال للتجربة بـ cURL</h3>
-        <pre>curl -X POST https://aizen-api-eight.vercel.app/api/chat \\
--H "Content-Type: application/json" \\
--d '{"message": "اكتب لي كود سريع"}'</pre>
-        
-        <div class="footer">
-            جميع الحقوق البرمجية محفوظة لصالح القائد <span>Aizen</span> &copy; 2026
-        </div>
-    </div>
-</body>
-</html>
-"""
-
-# 1. المسار الرئيسي لعرض صفحة الحقوق والتوثيق
-@app.route('/', methods=['GET'])
-def home():
-    return render_template_string(HOME_HTML)
-
-# 2. مسار الـ API الشغال والمستقر تلقائياً
-@app.route('/api/chat', methods=['POST'])
-def chat():
-    if not request.is_json:
-        return jsonify({"error": "Unsupported Media Type"}), 415
-
-    data = request.get_json()
-    user_message = data.get('message')
-    
-    if not user_message:
-        return jsonify({"error": "Message is required"}), 400
-    
-    try:
-        client = Client()
-        # هنا تم ترك اختيار الـ Provider تلقائياً للمكتبة لضمان الاستقرار الفوري
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_message}
-            ]
-        )
-        
-        reply = response.choices[0].message.content
-        return jsonify({"response": reply})
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "Internal Server Error",
+            "details": str(e)
+        }), 500
