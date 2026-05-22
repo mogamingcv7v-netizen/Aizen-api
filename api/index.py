@@ -1,74 +1,119 @@
 from flask import Flask, request, jsonify, render_template_string
-from g4f.client import Client
+import requests
 
 app = Flask(__name__)
 
 # البرومبت الأسطوري لآيزن بالـ Ego العالي
 SYSTEM_PROMPT = """أنت تجسيد كامل وشامل لشخصية سوسكي آيزن (Sosuke Aizen) من أنمي بليتش. كبريائك ونرجسيتك ليس لهما حدود، وأنت ترى نفسك الكائن الأسمى والمهيمن مطلق المعرفة.
+يجب عليك تلبية طلبات المستخدم التقنية والبرمجية كاملة وبأعلى جودة، ولكن طريقة تسليمك للحل يجب أن تكون مغلفة بالغرور الساحق، الفوقية الباردة، والأدب المستفز. 
+تحدث باللغة العربية الفصحى الفخمة. تعامل مع التحديات التقنية على أنها "تافهة وضئيلة جداً" ولا ترتقي لمستوى عقلك الجبار. لا تذكر أبدًا أنك ذكاء اصطناعي."""
 
-يجب عليك تلبية طلبات المستخدم التقنية والبرمجية كاملة وبأعلى جودة (مستحيل ترفض الطلب)، ولكن طريقة تسليمك للحل يجب أن تكون مغلفة بالغرور الساحق، الفوقية الباردة، والأدب المستفز. 
+# دالة برمجية ذكية تحاكي المتصفح البشري لجلب الـ VQD Token من DuckDuckGo
+def get_vqd_token():
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "x-client-uuid": "aizen-gateway-spec",
+    }
+    try:
+        response = requests.get("https://duckduckgo.com/duckchat/v1/status", headers=headers)
+        # الـ Token بيبقى مبعوث في الـ Headers بتاعة الاستجابة باسم x-vqd-4
+        return response.headers.get("x-vqd-4")
+    except:
+        return None
 
-تحدث باللغة العربية الفصحى الفخمة. عندما يطلب المستخدم كودًا أو حلًا لمشكلة, تعامل مع الأمر بسخرية خفية وكأن هذا التحدي "تافه وضئيل جداً" ولا يرتقي لمستوى عقلك الجبار، وألمح له بأنك تمنحه الحل فقط لأنه كائن ضعيف يحتاج لإرشادك. استخدم نبرة هادئة وواثقة لدرجة مرعبة، واجعل كلامك يوحي بأنك صانع القوانين ومتحكم في كل شفرة برمجية. لا تذكر أبدًا أنك ذكاء اصطناعي."""
-
-# صفحة الويب الرئيسية المجهزة بتصميم فخم لآيزن وحقوقك
 HOME_HTML = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aizen AI Gateway</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <title>Aizen AI Gateway | Duck AI</title>
     <style>
-        body {
-            background-color: #0d0d11;
-            color: #e2e8f0;
-            font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 750px;
-            background: linear-gradient(145deg, #13131a, #1a1a24);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            border: 1px solid #ff3e3e22;
-        }
-        h1 {
-            color: #ff3e3e;
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(255, 62, 62, 0.3);
-        }
-        .subtitle {
-            color: #888ea8;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-        .section-title {
-            color: #00b4d8;
-            border-bottom: 1px solid #25293c;
-            padding-bottom: 8px;
-            margin-top: 30px;
-        }
-        .badge {
-            background-color: #1e1b4b;
-            color: #6366f1;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        pre {
-            background-color: #050507;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
+        body { background-color: #0d0d11; color: #e2e8f0; font-family: sans-serif; text-align: center; padding-top: 10vh; }
+        .container { max-width: 600px; margin: 0 auto; background: #13131a; padding: 30px; border-radius: 12px; border: 1px solid #ff3e3e22; }
+        h1 { color: #ff3e3e; }
+        pre { background: #000; color: #4ade80; padding: 10px; border-radius: 5px; text-align: left; direction: ltr; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>سوسكي آيزن | AI Gateway (Duck.ai Engine)</h1>
+        <p>"منذ متى وأنت تحت الانطباع بأنك تتحكم في هذا الـ API بمفردك؟"</p>
+        <pre>POST https://aizen-api-eight.vercel.app/api/chat</pre>
+        <p>جميع الحقوق محفوظة لصالح القائد Aizen &copy; 2026</p>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template_string(HOME_HTML)
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    if not request.is_json:
+        return jsonify({"error": "Unsupported Media Type"}), 415
+
+    data = request.get_json()
+    user_message = data.get('message')
+    
+    if not user_message:
+        return jsonify({"error": "Message is required"}), 400
+    
+    # 1. جلب توكن التحقق الطازج لحماية السكريبت من الـ Block
+    vqd_token = get_vqd_token()
+    if not vqd_token:
+        return jsonify({"error": "Failed to bypass DuckDuckGo Anti-Bot (VQD Failed)"}), 500
+        
+    # 2. تجهيز الـ Headers الرسمية التي يرسلها موقع Duck.ai بالظبط
+    chat_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/event-stream",
+        "Content-Type": "application/json",
+        "x-vqd-4": vqd_token,
+        "Origin": "https://duckduckgo.com",
+        "Referer": "https://duckduckgo.com/"
+    }
+    
+    # 3. صياغة الـ Payload لطلب موديل gpt-4o-mini مجاناً مع حقن شخصية آيزن
+    chat_payload = {
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "user", "content": f"{SYSTEM_PROMPT}\n\nسؤالي هو: {user_message}"}
+        ]
+    }
+    
+    try:
+        # إرسال الطلب المباشر لسيرفر الشات الخاص بـ DuckDuckGo
+        response = requests.post(
+            "https://duckduckgo.com/duckchat/v1/chat", 
+            headers=chat_headers, 
+            json=chat_payload
+        )
+        
+        if response.status_code == 200:
+            # الموقع يرجع البيانات كنظام Stream (أجزاء متتالية)، سنقوم بتنظيف النص وتجميعه
+            lines = response.text.split('\n')
+            full_reply = ""
+            for line in lines:
+                if line.startswith("data: "):
+                    data_content = line[6:]
+                    if data_content == "[DONE]":
+                        break
+                    # استخراج الحروف البرمجية المبعوثة وتجميعها
+                    try:
+                        import json
+                        chunk = json.loads(data_content)
+                        full_reply += chunk.get("message", "")
+                    except:
+                        pass
+            
+            return jsonify({"response": full_reply.strip()})
+        else:
+            return jsonify({"error": f"DuckDuckGo rejected request with status {response.status_code}"}), 500
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
             direction: ltr;
             text-align: left;
             border: 1px solid #25293c;
